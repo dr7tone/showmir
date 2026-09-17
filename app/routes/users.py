@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 @router.get("/{user_id}")
-async def get_user(user_id: int, session: SessionDep, request: Request): #там костыль лютый если будем делать что то глобальное - надо переделать
+async def get_user(user_id: int, session: SessionDep, request: Request): #там костыль лютый, если будем делать что то глобальное - надо переделать
     current_role = get_current_admin_role(request)
     if current_role == "admin":
         return await change_user_balance(user_id, session, request)
