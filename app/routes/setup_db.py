@@ -4,7 +4,7 @@ from typing import cast
 from fastapi import APIRouter
 from sqlalchemy import Table
 
-from app.database.models import Admin_Model, User_Model
+from app.database.models import Admin_Model, User_Model, transaction_model
 from app.database.database import SessionDep, engine
 router = APIRouter(
     prefix="/db",
@@ -40,3 +40,10 @@ async def create_table_for_admins(data: str, session: SessionDep):
     
     else:
         return {"ok": False, "message": "Invalid data. To create the table, send 'drop and create'."}
+
+@router.post("/create_table_for_transactions")
+async def create_table_for_transactions():
+    async with engine.begin() as conn:
+        await conn.run_sync(lambda sync_conn: transaction_model.metadata.drop_all(bind=sync_conn, tables=[cast(Table, transaction_model.__table__)]))
+        await conn.run_sync(lambda sync_conn: transaction_model.metadata.create_all(bind=sync_conn, tables=[cast(Table, transaction_model.__table__)]))
+    return {"ok": True}

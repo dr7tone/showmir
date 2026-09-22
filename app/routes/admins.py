@@ -3,7 +3,7 @@ from app.Security.JWT_config import security
 from sqlalchemy import select
 from app.Security.JWT_config import JWT_config
 from app.database.database import SessionDep
-from app.database.models import Admin_Model, User_Model
+from app.database.models import Admin_Model, User_Model, transaction_model
 from app.schemas.admin import CreateAdmin
 from app.Security.auth import get_current_admin_role, get_current_admin_uid
 router = APIRouter(
@@ -116,6 +116,8 @@ async def change_user_balance(user_id: int, session: SessionDep, request:Request
             user_to_change_balance.balance = user_to_change_balance.balance + admin_to_change_balance.price
             if user_to_change_balance.balance < 0:
                 return {"error": "Dont have enough balance"}
+            new_transaction = transaction_model(sender = current_uid, recipient = user_id, count = admin_to_change_balance.price)
+            session.add(new_transaction)
             await session.commit()
             return {"message": "User balance changed successfully"}
         else:

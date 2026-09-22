@@ -16,3 +16,10 @@ class Admin_Model(Base):
     token: Mapped[str] = mapped_column(String, nullable=False)
     role: Mapped[str] = mapped_column(String, nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+class transaction_model(Base):
+    __tablename__ = "transactions"  
+    id: Mapped[int] = mapped_column(primary_key=True)
+    sender: Mapped[int] = mapped_column(nullable=False)
+    recipient: Mapped[int] = mapped_column(nullable=False)
+    count: Mapped[int] = mapped_column(nullable=False)
